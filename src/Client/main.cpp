@@ -1,6 +1,6 @@
 #include <iostream>
-#include <asio.hpp>
+#include <boost/asio.hpp>
 
-int main(int, char**) {
+int main(int argc, char** argv) {
     std::cout << "Hello, world!\n";
 }
