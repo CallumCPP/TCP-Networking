@@ -15,6 +15,8 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     endif()
 endif()
 
+include_directories(external/asio/asio/include)
+
 file(GLOB_RECURSE CLIENT_SOURCES "src/Client/*.cpp")
 add_executable(TCP-Client ${CLIENT_SOURCES})
 
