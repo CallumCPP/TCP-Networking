@@ -17,6 +17,8 @@ endif()
 
 include_directories(external/asio/asio/include)
 
+add_definitions(-DASIO_STANDALONE)
+
 file(GLOB_RECURSE CLIENT_SOURCES "src/Client/*.cpp")
 add_executable(TCP-Client ${CLIENT_SOURCES})
 
