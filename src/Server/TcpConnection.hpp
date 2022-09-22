@@ -3,11 +3,6 @@
 #include <asio.hpp>
 #include <thread>
 
-std::string MakeDaytimeString() {
-	std::time_t now = time(0);
-	return std::ctime(&now);
-}
-
 class TcpConnection {
 public:
 	TcpConnection(asio::io_context& io_context) : socket_(io_context) {}
@@ -19,18 +14,16 @@ public:
 	void start() {
 		asio::error_code error;
 
-		socket_.async_read_some(asio::buffer(buf),
-        	std::bind(&TcpConnection::handle_read, this,
+		socket_.async_read_some(asio::buffer(buf_),
+        	std::bind(&TcpConnection::HandleRead, this,
           		std::placeholders::_1));
-				
-		
 	}
 
 private:
-	void handle_write(const asio::error_code& error){
+	void HandleWrite(const asio::error_code& error){
 		if (!error) {
-			socket_.async_read_some(asio::buffer(buf),
-				std::bind(&TcpConnection::handle_read, this,
+			socket_.async_read_some(asio::buffer(buf_),
+				std::bind(&TcpConnection::HandleRead, this,
 					std::placeholders::_1));
 		} else {
 			std::cout << error.message() << '\n';
@@ -38,20 +31,22 @@ private:
 		}
 	}
 
-	void handle_read(const asio::error_code& error) {
+	void HandleRead(const asio::error_code& error) {
 		if (!error) {
+			std::cout << "Message from client: " << std::string(buf_.data(), buf_.size());
 			asio::async_write(socket_,
-				asio::buffer(buf),
-				std::bind(&TcpConnection::handle_write, this,
+				asio::buffer(buf_),
+				std::bind(&TcpConnection::HandleWrite, this,
 				std::placeholders::_1));
+			buf_.fill(0);
 		} else {
 			std::cout << error.message() << '\n';
 			delete this;
 		}
 	}
 
-	int userID_;
-	std::array<char, 1024> buf;
+	std::string userHash_;
+	std::array<char, 1024> buf_;
 	asio::ip::tcp::socket socket_;
 	std::string message_;
 };
