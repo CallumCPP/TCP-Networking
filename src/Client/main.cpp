@@ -3,6 +3,10 @@
 
 #include "TcpClient.hpp"
 
+void ReadCallback(std::array<char, 1024>& buf) {
+    std::cout << "Message from server: " << std::string(buf.data(), buf.size());
+}
+
 int main(int argc, char** argv) {
     try {
         if (argc != 3) {
@@ -11,7 +15,7 @@ int main(int argc, char** argv) {
         }
         
         asio::io_context io_context;
-        TcpClient client(io_context, argv[1], argv[2]);
+        TcpClient client(io_context, argv[1], argv[2], &ReadCallback);
         client.start();
         std::thread t([&io_context]() { io_context.run(); });
 

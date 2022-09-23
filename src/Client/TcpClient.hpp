@@ -6,7 +6,7 @@
 
 class TcpClient {
 public:
-    TcpClient(asio::io_context& io_context, char* host, char* port) : socket_(io_context) {
+    TcpClient(asio::io_context& io_context, char* host, char* port, void  (*readCallback)(std::array<char, 1024>& buf)) : socket_(io_context), readCallback_(readCallback) {
         asio::error_code error;
         asio::ip::tcp::resolver resolver(io_context);
         asio::ip::tcp::resolver::results_type endpoints = resolver.resolve(host, port);
@@ -34,7 +34,7 @@ public:
 private:
     void HandleRead(const asio::error_code& error) {
         if (!error) {
-            std::cout << "Message from server: " << std::string(buf_.data(), buf_.size());
+            readCallback_(buf_);
             asio::async_read(socket_,
                 asio::buffer(buf_),
                 std::bind(&TcpClient::HandleRead, this,
@@ -46,6 +46,7 @@ private:
         }
     }
 
+    void  (*readCallback_)(std::array<char, 1024>& buf);
     std::array<char, 1024> buf_;
     asio::ip::tcp::socket socket_;
 };
