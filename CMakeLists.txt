@@ -15,7 +15,8 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     endif()
 endif()
 
-include_directories(external/asio/asio/include)
+include_directories(external/asio/asio/include external/sqlite3)
+add_library(sqlite3 STATIC external/sqlite3/sqlite3.c external/sqlite3/shell.c)
 
 add_definitions(-DASIO_STANDALONE)
 
@@ -24,3 +25,4 @@ add_executable(TCP-Client ${CLIENT_SOURCES})
 
 file(GLOB_RECURSE SERVER_SOURCES "src/Server/*.cpp")
 add_executable(TCP-Server ${SERVER_SOURCES})
+target_link_libraries(TCP-Server sqlite3)

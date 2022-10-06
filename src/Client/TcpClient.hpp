@@ -26,9 +26,14 @@ public:
         asio::error_code error;
         
         asio::write(socket_, asio::buffer(message), error);
-        if (error) {
-            std::cout << error.message() << '\n';
-        }
+        if (error) std::cout << error.message() << '\n';
+    }
+
+    void Write(std::array<char, 1024>& buf) {
+        asio::error_code error;
+        
+        asio::write(socket_, asio::buffer(buf), error);
+        if (error) std::cout << error.message() << '\n';
     }
     
 private:
